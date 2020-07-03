@@ -87,6 +87,9 @@ OctomapServer::OctomapServer(const ros::NodeHandle private_nh_, const ros::NodeH
   m_nh_private.param("pointcloud_max_z", m_pointcloudMaxZ,m_pointcloudMaxZ);
   m_nh_private.param("occupancy_min_z", m_occupancyMinZ,m_occupancyMinZ);
   m_nh_private.param("occupancy_max_z", m_occupancyMaxZ,m_occupancyMaxZ);
+  m_nh_private.param("occupancy_2d_min_z", m_occupancy2DMinZ,m_occupancy2DMinZ);
+  m_nh_private.param("occupancy_2d_max_z", m_occupancy2DMaxZ,m_occupancy2DMaxZ);
+
   m_nh_private.param("min_x_size", m_minSizeX,m_minSizeX);
   m_nh_private.param("min_y_size", m_minSizeY,m_minSizeY);
 
@@ -1077,6 +1080,8 @@ void OctomapServer::handleFreeNodeInBBX(const OcTreeT::iterator& it){
 void OctomapServer::update2DMap(const OcTreeT::iterator& it, bool occupied){
 
   // update 2D map (occupied always overrides):
+  if( occupied && ( it.getZ() > m_occupancy2DMaxZ  ||  it.getZ() < m_occupancy2DMinZ ) )
+    return;
 
   if (it.getDepth() == m_maxTreeDepth){
     unsigned idx = mapIdx(it.getKey());

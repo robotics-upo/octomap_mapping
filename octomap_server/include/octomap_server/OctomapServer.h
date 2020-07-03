@@ -236,6 +236,9 @@ protected:
   double m_pointcloudMaxZ;
   double m_occupancyMinZ;
   double m_occupancyMaxZ;
+  double m_occupancy2DMinZ;
+  double m_occupancy2DMaxZ;
+
   double m_minSizeX;
   double m_minSizeY;
   bool m_filterSpeckles;
