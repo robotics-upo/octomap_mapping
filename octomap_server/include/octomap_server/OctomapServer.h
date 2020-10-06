@@ -172,8 +172,13 @@ protected:
   /// updates the downprojected 2D map as either occupied or free
   virtual void update2DMap(const OcTreeT::iterator& it, bool occupied);
 
+  virtual void update2DMap(const OcTreeT::iterator& it, bool occupied, nav_msgs::OccupancyGrid &grid);
+  
   inline unsigned mapIdx(int i, int j) const {
     return m_gridmap.info.width * j + i;
+  }
+  inline unsigned mapIdx(int i, int j, const nav_msgs::OccupancyGrid &grid) const {
+    return grid.info.width * j + i;
   }
 
   inline unsigned mapIdx(const octomap::OcTreeKey& key) const {
@@ -200,7 +205,7 @@ protected:
   static std_msgs::ColorRGBA heightMapColor(double h);
   ros::NodeHandle m_nh;
   ros::NodeHandle m_nh_private;
-  ros::Publisher  m_markerPub, m_binaryMapPub, m_fullMapPub, m_pointCloudPub, m_collisionObjectPub, m_mapPub, m_cmapPub, m_fmapPub, m_fmarkerPub;
+  ros::Publisher  m_markerPub, m_binaryMapPub, m_fullMapPub, m_pointCloudPub, m_collisionObjectPub, m_mapPub, m_mapPubAlt, m_cmapPub, m_fmapPub, m_fmarkerPub;
   message_filters::Subscriber<sensor_msgs::PointCloud2>* m_pointCloudSub;
   tf::MessageFilter<sensor_msgs::PointCloud2>* m_tfPointCloudSub;
   ros::ServiceServer m_octomapBinaryService, m_octomapFullService, m_clearBBXService, m_resetService;
@@ -236,8 +241,8 @@ protected:
   double m_pointcloudMaxZ;
   double m_occupancyMinZ;
   double m_occupancyMaxZ;
-  double m_occupancy2DMinZ;
-  double m_occupancy2DMaxZ;
+  double m_occupancy2DMinZ, m_occupancy2DMinZAlt;
+  double m_occupancy2DMaxZ, m_occupancy2DMaxZAlt;
 
   double m_minSizeX;
   double m_minSizeY;
@@ -254,7 +259,7 @@ protected:
 
   // downprojected 2D map:
   bool m_incrementalUpdate;
-  nav_msgs::OccupancyGrid m_gridmap;
+  nav_msgs::OccupancyGrid m_gridmap, m_gridmap_alternative;
   bool m_publish2DMap;
   bool m_mapOriginChanged;
   octomap::OcTreeKey m_paddedMinKey;
